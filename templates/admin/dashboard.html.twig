@@ -1,0 +1,183 @@
+{% extends 'base.html.twig' %}
+{% block title %}Administration{% endblock %}
+{% block body %}
+<div class="flex h-screen bg-gray-100">
+    <div class="hidden md:flex md:flex-shrink-0">
+        <div class="flex flex-col w-64">
+            <div class="flex-shrink-0 flex h-16 bg-purple-700 items-center justify-center">
+                <span class="text-xl font-semibold text-white">Administration</span>
+            </div>
+                <div class="flex flex-col flex-grow bg-purple-800 overflow-y-auto">
+            <nav class="flex-1 space-y-1 px-2 py-4">
+                <a href="{{ path('app_admin_dashboard') }}" 
+                   class="{% if app.request.get('_route') == 'app_admin_dashboard' %}
+                          bg-purple-600 text-white
+                          {% else %}
+                          text-purple-100 hover:bg-purple-700 hover:text-white
+                          {% endif %}
+                          group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                    <i class="fas fa-chart-line mr-3 text-lg"></i>
+                    <span>Tableau de bord</span>
+                </a>
+
+                <a href="{{ path('app_admin_users') }}"
+                   class="{% if app.request.get('_route') == 'app_admin_users' %}
+                          bg-purple-600 text-white
+                          {% else %}
+                          text-purple-100 hover:bg-purple-700 hover:text-white
+                          {% endif %}
+                          group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                    <i class="fas fa-users mr-3 text-lg"></i>
+                    <span>Utilisateurs</span>
+                </a>
+
+                <a href="{{ path('app_admin_books') }}"
+                   class="{% if app.request.get('_route') == 'app_admin_books' %}
+                          bg-purple-600 text-white
+                          {% else %}
+                          text-purple-100 hover:bg-purple-700 hover:text-white
+                          {% endif %}
+                          group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                    <i class="fas fa-book mr-3 text-lg"></i>
+                    <span>Livres</span>
+                </a>
+
+                <a href="{{ path('app_admin_authors') }}"
+                   class="{% if app.request.get('_route') == 'app_admin_authors' %}
+                          bg-purple-600 text-white
+                          {% else %}
+                          text-purple-100 hover:bg-purple-700 hover:text-white
+                          {% endif %}
+                          group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                    <i class="fas fa-pen mr-3 text-lg"></i>
+                    <span>Auteurs</span>
+                </a>
+
+                <a href="{{ path('app_admin_discussions') }}"
+                   class="{% if app.request.get('_route') == 'app_admin_discussions' %}
+                          bg-purple-600 text-white
+                          {% else %}
+                          text-purple-100 hover:bg-purple-700 hover:text-white
+                          {% endif %}
+                          group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                    <i class="fas fa-comments mr-3 text-lg"></i>
+                    <span>Discussions</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="flex-1 flex flex-col overflow-hidden">
+    <div class="bg-white shadow">
+        <div class="flex justify-between items-center px-6 py-4">
+            <h1 class="text-2xl font-semibold text-gray-800">Tableau de bord</h1>
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-600">{{ app.user.firstName }} {{ app.user.lastName }}</span>
+                <a href="{{ path('app_logout') }}" class="text-gray-600 hover:text-gray-800 transition-colors">
+                    <i class="fas fa-sign-out-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <main class="flex-1 overflow-y-auto bg-gray-100 p-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="rounded-full p-3 bg-purple-100">
+                                <i class="fas fa-users text-purple-600 text-xl"></i>
+                            </div>
+                            <div class="ml-5">
+                                <h3 class="text-sm font-medium text-gray-500">Utilisateurs</h3>
+                                <div class="mt-2 flex items-baseline">
+                                    <span class="text-3xl font-semibold text-gray-900">{{ stats.users }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{{ path('app_admin_users') }}" 
+                               class="text-sm text-purple-600 hover:text-purple-800 flex items-center transition-colors">
+                                Voir détails
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="rounded-full p-3 bg-blue-100">
+                                <i class="fas fa-book text-blue-600 text-xl"></i>
+                            </div>
+                            <div class="ml-5">
+                                <h3 class="text-sm font-medium text-gray-500">Livres</h3>
+                                <div class="mt-2 flex items-baseline">
+                                    <span class="text-3xl font-semibold text-gray-900">{{ stats.books }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{{ path('app_admin_books') }}" 
+                               class="text-sm text-blue-600 hover:text-blue-800 flex items-center transition-colors">
+                                Voir détails
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="rounded-full p-3 bg-green-100">
+                                <i class="fas fa-pen text-green-600 text-xl"></i>
+                            </div>
+                            <div class="ml-5">
+                                <h3 class="text-sm font-medium text-gray-500">Auteurs</h3>
+                                <div class="mt-2 flex items-baseline">
+                                    <span class="text-3xl font-semibold text-gray-900">{{ stats.authors }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{{ path('app_admin_authors') }}" 
+                               class="text-sm text-green-600 hover:text-green-800 flex items-center transition-colors">
+                                Voir détails
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex items-center">
+                            <div class="rounded-full p-3 bg-orange-100">
+                                <i class="fas fa-comments text-orange-600 text-xl"></i>
+                            </div>
+                            <div class="ml-5">
+                                <h3 class="text-sm font-medium text-gray-500">Discussions</h3>
+                                <div class="mt-2 flex items-baseline">
+                                    <span class="text-3xl font-semibold text-gray-900">{{ stats.discussions }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <a href="{{ path('app_admin_discussions') }}" 
+                               class="text-sm text-orange-600 hover:text-orange-800 flex items-center transition-colors">
+                                Voir détails
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+{% endblock %}

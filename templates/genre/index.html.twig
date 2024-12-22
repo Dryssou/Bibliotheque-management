@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Genres littéraires{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Genres littéraires</h1>
+                    <p class="mt-2 text-sm text-gray-600">Explorez notre collection par catégories</p>
+                </div>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_genre_new') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors duration-300 shadow-sm hover:shadow">
+                        <i class="fas fa-plus mr-2"></i>
+                        Ajouter un genre
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% for message in app.flashes('success') %}
+            <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                    <span class="text-green-700">{{ message }}</span>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for genre in genres %}
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300">
+                    <div class="p-6">
+                        <div class="flex items-start mb-4">
+                            <div class="flex-shrink-0">
+                                <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-book-open text-purple-600 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                <h2 class="text-xl font-semibold text-gray-900">{{ genre.name }}</h2>
+                                <div class="flex items-center mt-1 text-sm text-gray-600">
+                                    <i class="fas fa-books mr-2"></i>
+                                    <span>{{ genre.books|length }} {% if genre.books|length <= 1 %}livre{% else %}livres{% endif %}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if genre.description %}
+                            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+                                {{ genre.description }}
+                            </p>
+                        {% endif %}
+
+                        <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
+                            <a href="{{ path('app_genre_show', {'id': genre.id}) }}" 
+                               class="inline-flex items-center text-sm font-medium text-purple-600 hover:text-purple-700 transition-colors">
+                                <span>Voir détails</span>
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <div class="flex items-center space-x-3">
+                                    <a href="{{ path('app_genre_edit', {'id': genre.id}) }}" 
+                                       class="text-gray-600 hover:text-purple-600 transition-colors"
+                                       title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    {{ include('genre/_delete_form.html.twig') }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full">
+                    <div class="text-center py-12 bg-white rounded-xl shadow-sm">
+                        <div class="text-gray-400 mb-3">
+                            <i class="fas fa-books text-4xl"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900">Aucun genre</h3>
+                        <p class="mt-2 text-sm text-gray-500">Aucun genre littéraire n'a été ajouté pour le moment.</p>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div class="mt-6">
+                                <a href="{{ path('app_genre_new') }}" 
+                                   class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors duration-300">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Ajouter un genre
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+<div class="hidden md:flex md:flex-shrink-0">
+    <div class="flex flex-col w-64">
+        <div class="flex-shrink-0 flex h-16 bg-purple-700 items-center justify-center">
+            <span class="text-xl font-semibold text-white">Administration</span>
+        </div>
+            <div class="flex flex-col flex-grow bg-purple-800 overflow-y-auto">
+        <nav class="flex-1 space-y-1 px-2 py-4">
+            <a href="{{ path('app_admin_dashboard') }}" 
+               class="{% if app.request.get('_route') == 'app_admin_dashboard' %}
+                      bg-purple-600 text-white
+                      {% else %}
+                      text-purple-100 hover:bg-purple-700 hover:text-white
+                      {% endif %}
+                      group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                <i class="fas fa-chart-line mr-3 text-lg"></i>
+                <span>Tableau de bord</span>
+            </a>
+
+            <a href="{{ path('app_admin_users') }}"
+               class="{% if app.request.get('_route') == 'app_admin_users' %}
+                      bg-purple-600 text-white
+                      {% else %}
+                      text-purple-100 hover:bg-purple-700 hover:text-white
+                      {% endif %}
+                      group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                <i class="fas fa-users mr-3 text-lg"></i>
+                <span>Utilisateurs</span>
+            </a>
+
+            <a href="{{ path('app_admin_books') }}"
+               class="{% if app.request.get('_route') == 'app_admin_books' %}
+                      bg-purple-600 text-white
+                      {% else %}
+                      text-purple-100 hover:bg-purple-700 hover:text-white
+                      {% endif %}
+                      group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                <i class="fas fa-book mr-3 text-lg"></i>
+                <span>Livres</span>
+            </a>
+
+            <a href="{{ path('app_admin_authors') }}"
+               class="{% if app.request.get('_route') == 'app_admin_authors' %}
+                      bg-purple-600 text-white
+                      {% else %}
+                      text-purple-100 hover:bg-purple-700 hover:text-white
+                      {% endif %}
+                      group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                <i class="fas fa-pen mr-3 text-lg"></i>
+                <span>Auteurs</span>
+            </a>
+
+            <a href="{{ path('app_admin_discussions') }}"
+               class="{% if app.request.get('_route') == 'app_admin_discussions' %}
+                      bg-purple-600 text-white
+                      {% else %}
+                      text-purple-100 hover:bg-purple-700 hover:text-white
+                      {% endif %}
+                      group flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                <i class="fas fa-comments mr-3 text-lg"></i>
+                <span>Discussions</span>
+            </a>
+        </nav>
+    </div>
+</div>
+</div>

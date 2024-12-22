@@ -1,0 +1,107 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Auteurs{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="mb-8">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">Liste des Auteurs</h1>
+                    <p class="mt-2 text-sm text-gray-600">Découvrez notre collection d'auteurs et leurs œuvres</p>
+                </div>
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('app_author_new') }}" 
+                       class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors duration-300 shadow-sm hover:shadow">
+                        <i class="fas fa-plus mr-2"></i>
+                        Ajouter un auteur
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% for message in app.flashes('success') %}
+            <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                    <span class="text-green-700">{{ message }}</span>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {% for author in authors %}
+                <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden">
+                    {# Author Image #}
+                    {% if author.photo %}
+                        <div class="relative h-56">
+                            <img src="{{ asset('uploads/authors/' ~ author.photo) }}" 
+                                 alt="{{ author.name }}" 
+                                 class="w-full h-full object-cover">
+                            {% if author.nationality %}
+                                <span class="absolute top-4 right-4 px-3 py-1 bg-black bg-opacity-50 text-white text-xs rounded-full">
+                                    {{ author.nationality }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="h-56 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                            <i class="fas fa-user-circle text-4xl text-gray-400"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="p-5">
+                        <div class="mb-4">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-2">{{ author.name }}</h2>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-book mr-2"></i>
+                                <span>{{ author.books|length }} {% if author.books|length <= 1 %}livre publié{% else %}livres publiés{% endif %}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <a href="{{ path('app_author_show', {'id': author.id}) }}" 
+                               class="inline-flex items-center text-sm font-medium text-purple-600 hover:text-purple-700 transition-colors">
+                                <span>Voir détails</span>
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </a>
+                            
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <div class="flex items-center space-x-3">
+                                    <a href="{{ path('app_author_edit', {'id': author.id}) }}" 
+                                       class="text-gray-600 hover:text-purple-600 transition-colors"
+                                       title="Modifier">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    
+                                    {{ include('author/_delete_form.html.twig') }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full">
+                    <div class="text-center py-12 bg-white rounded-xl shadow-sm">
+                        <div class="text-gray-400 mb-3">
+                            <i class="fas fa-books text-4xl"></i>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-900">Aucun auteur</h3>
+                        <p class="mt-2 text-sm text-gray-500">Aucun auteur n'a été ajouté pour le moment.</p>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div class="mt-6">
+                                <a href="{{ path('app_author_new') }}" 
+                                   class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors duration-300">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Ajouter un auteur
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

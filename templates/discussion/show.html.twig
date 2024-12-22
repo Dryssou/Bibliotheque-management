@@ -1,0 +1,161 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ discussion.title }}{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {% for message in app.flashes('success') %}
+            <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                    <span class="text-green-700">{{ message }}</span>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden mb-6">
+            <div class="p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">{{ discussion.title }}</h1>
+                        <div class="mt-2 flex flex-wrap items-center gap-2">
+                            <span class="text-sm text-gray-600 flex items-center">
+                                <i class="fas fa-user mr-2"></i>
+                                {{ discussion.user.firstName }} {{ discussion.user.lastName }}
+                            </span>
+                            <span class="text-gray-300">•</span>
+                            <span class="text-sm text-gray-600 flex items-center">
+                                <i class="fas fa-clock mr-2"></i>
+                                {{ discussion.createdAt|date('d/m/Y H:i') }}
+                            </span>
+                            {% if discussion.isResolved %}
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                    <i class="fas fa-check-circle mr-1"></i>
+                                    Résolu
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if is_granted('edit', discussion) %}
+                        <div class="flex flex-wrap gap-2">
+                            <a href="{{ path('app_discussion_edit', {'id': discussion.id}) }}" 
+                               class="inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium rounded-lg transition-colors duration-300">
+                                <i class="fas fa-edit mr-2"></i>
+                                Modifier
+                            </a>
+                            
+                            <form method="post" action="{{ path('app_discussion_resolve', {'id': discussion.id}) }}" class="inline">
+                                <input type="hidden" name="_token" value="{{ csrf_token('resolve' ~ discussion.id) }}">
+                                <button type="submit" 
+                                        class="inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-300
+                                        {% if discussion.isResolved %}
+                                            bg-yellow-100 text-yellow-800 hover:bg-yellow-200
+                                        {% else %}
+                                            bg-green-100 text-green-800 hover:bg-green-200
+                                        {% endif %}">
+                                    <i class="fas {% if discussion.isResolved %}fa-undo{% else %}fa-check-circle{% endif %} mr-2"></i>
+                                    {% if discussion.isResolved %}
+                                        Rouvrir
+                                    {% else %}
+                                        Marquer comme résolu
+                                    {% endif %}
+                                </button>
+                            </form>
+
+                            {{ include('discussion/_delete_form.html.twig') }}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="mt-6 prose max-w-none text-gray-600">
+                    {{ discussion.content|nl2br }}
+                </div>
+
+                <div class="mt-4 flex items-center text-sm text-gray-500">
+                    <i class="fas fa-book mr-2"></i>
+                    Discussion à propos de : 
+                    <a href="{{ path('app_book_show', {'id': discussion.book.id}) }}" 
+                       class="ml-1 text-purple-600 hover:text-purple-700 transition-colors">
+                        {{ discussion.book.title }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">
+                        Commentaires ({{ discussion.comments|length }})
+                    </h2>
+                </div>
+
+                {% if not discussion.isResolved %}
+                    <div class="mb-8">
+                        {{ form_start(commentForm, {'attr': {'class': 'space-y-4'}}) }}
+                            {{ form_widget(commentForm.content, {
+                                'attr': {
+                                    'class': 'block w-full rounded-lg border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 transition-colors',
+                                    'rows': '3',
+                                    'placeholder': 'Votre commentaire...'
+                                }
+                            }) }}
+                            <button type="submit" 
+                                    class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors duration-300 shadow-sm hover:shadow">
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                Commenter
+                            </button>
+                        {{ form_end(commentForm) }}
+                    </div>
+                {% endif %}
+
+                <div class="space-y-6">
+                    {% for comment in discussion.comments|sort((a, b) => b.createdAt <=> a.createdAt) %}
+                        <div class="border-t border-gray-100 pt-6">
+                            <div class="flex justify-between items-start gap-4">
+                                <div class="flex-grow">
+                                    <div class="flex items-center text-sm text-gray-500">
+                                        <span class="font-medium text-gray-900">
+                                            {{ comment.user.firstName }} {{ comment.user.lastName }}
+                                        </span>
+                                        <span class="mx-2">•</span>
+                                        <span>
+                                            {{ comment.createdAt|date('d/m/Y H:i') }}
+                                        </span>
+                                    </div>
+                                    <div class="mt-2 text-gray-600 whitespace-pre-line">
+                                        {{ comment.content }}
+                                    </div>
+                                </div>
+
+                                {% if is_granted('ROLE_ADMIN') or app.user == comment.user %}
+                                    <form method="post" 
+                                          action="{{ path('app_comment_delete', {'id': comment.id}) }}" 
+                                          onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');"
+                                          class="flex-shrink-0">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
+                                        <button type="submit" 
+                                                class="text-gray-400 hover:text-red-600 transition-colors duration-300">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-12">
+                            <div class="text-gray-400 mb-3">
+                                <i class="fas fa-comments text-4xl"></i>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900">Aucun commentaire</h3>
+                            <p class="mt-2 text-sm text-gray-500">Soyez le premier à commenter cette discussion.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

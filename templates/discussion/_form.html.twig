@@ -1,0 +1,27 @@
+{{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+    <div class="space-y-4">
+        <div>
+            {{ form_label(form.title, 'Titre', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(form.title) }}
+            {{ form_errors(form.title, {'attr': {'class': 'mt-1 text-sm text-red-600'}}) }}
+        </div>
+
+        <div>
+            {{ form_label(form.book, 'Livre concerné', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(form.book) }}
+            {{ form_errors(form.book, {'attr': {'class': 'mt-1 text-sm text-red-600'}}) }}
+        </div>
+
+        <div>
+            {{ form_label(form.content, 'Contenu', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+            {{ form_widget(form.content) }}
+            {{ form_errors(form.content, {'attr': {'class': 'mt-1 text-sm text-red-600'}}) }}
+        </div>
+    </div>
+
+    <div class="flex justify-end space-x-3">
+        <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+            {{ button_label|default('Enregistrer') }}
+        </button>
+    </div>
+{{ form_end(form) }}

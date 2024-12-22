@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+{% block title %}Gestion des auteurs{% endblock %}
+{% block body %}
+<div class="flex h-screen bg-gray-100">
+    {{ include('admin/_sidebar.html.twig') }}
+<div class="flex-1 flex flex-col overflow-hidden">
+    <div class="bg-white shadow">
+        <div class="flex justify-between items-center px-6 py-4">
+            <h1 class="text-2xl font-semibold text-gray-800">Gestion des auteurs</h1>
+            <div class="flex items-center space-x-4">
+                <a href="{{ path('app_author_new') }}" 
+                   class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors duration-300">
+                    <i class="fas fa-plus mr-2"></i>
+                    Ajouter un auteur
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <main class="flex-1 overflow-y-auto bg-gray-100 p-6">
+        <div class="max-w-7xl mx-auto">
+            {% for message in app.flashes('success') %}
+                <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                        <span class="text-green-700">{{ message }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="bg-white rounded-lg shadow overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Auteur</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nationalité</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Livres</th>
+                                <th scope="col" class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for author in authors %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-6 py-4 whitespace-nowrap">
+                                        <div class="flex items-center">
+                                            {% if author.photo %}
+                                                <div class="flex-shrink-0 h-10 w-10">
+                                                    <img class="h-10 w-10 rounded-full object-cover" 
+                                                         src="{{ asset('uploads/authors/' ~ author.photo) }}" 
+                                                         alt="{{ author.name }}">
+                                                </div>
+                                            {% else %}
+                                                <div class="flex-shrink-0 h-10 w-10 rounded-full bg-purple-100 flex items-center justify-center">
+                                                    <i class="fas fa-user text-purple-600"></i>
+                                                </div>
+                                            {% endif %}
+                                            <div class="ml-4">
+                                                <div class="text-sm font-medium text-gray-900">
+                                                    {{ author.name }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ author.nationality|default('Non spécifiée') }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                        {{ author.books|length }} livre(s)
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                        <div class="flex items-center justify-end space-x-3">
+                                            <a href="{{ path('app_author_edit', {'id': author.id}) }}" 
+                                               class="text-purple-600 hover:text-purple-900">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form method="post" action="{{ path('app_author_delete', {'id': author.id}) }}" 
+                                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet auteur ?');" 
+                                                  class="inline">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ author.id) }}">
+                                                <button type="submit" class="text-red-600 hover:text-red-900">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="4" class="px-6 py-4 text-center text-gray-500">
+                                        Aucun auteur trouvé.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+</div>
+{% endblock %}

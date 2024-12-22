@@ -1,0 +1,130 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ book.title }}{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {% for message in app.flashes('success') %}
+            <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                    <span class="text-green-700">{{ message }}</span>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="md:col-span-1">
+                    {% if book.coverImage %}
+                        <div class="aspect-[3/4] relative">
+                            <img src="{{ asset('uploads/covers/' ~ book.coverImage) }}" 
+                                 alt="{{ book.title }}" 
+                                 class="w-full h-full object-cover">
+                        </div>
+                    {% else %}
+                        <div class="aspect-[3/4] bg-gradient-to-br from-purple-50 to-purple-100 flex flex-col items-center justify-center">
+                            <i class="fas fa-book text-6xl text-purple-300 mb-2"></i>
+                            <span class="text-sm text-purple-300">Pas de couverture</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="p-6 md:col-span-2">
+                    <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">{{ book.title }}</h1>
+                            <p class="mt-2 text-lg text-gray-600 flex items-center">
+                                <i class="fas fa-user-edit mr-2"></i>
+                                {{ book.author.name }}
+                            </p>
+                        </div>
+
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div class="flex gap-2">
+                                <a href="{{ path('app_book_edit', {'id': book.id}) }}" 
+                                   class="inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium rounded-lg transition-colors duration-300">
+                                    <i class="fas fa-edit mr-2"></i>
+                                    Modifier
+                                </a>
+                                <form method="post" action="{{ path('app_book_delete', {'id': book.id}) }}"
+                                      onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce livre ?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ book.id) }}">
+                                    <button class="inline-flex items-center px-4 py-2 bg-red-500 hover:bg-red-600 text-white text-sm font-medium rounded-lg transition-colors duration-300">
+                                        <i class="fas fa-trash-alt mr-2"></i>
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {% if book.genres|length > 0 %}
+                        <div class="flex flex-wrap gap-2 mt-4">
+                            {% for genre in book.genres %}
+                                <span class="px-3 py-1 text-xs font-medium bg-purple-50 text-purple-700 rounded-full border border-purple-100">
+                                    {{ genre.name }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="mt-6 prose max-w-none text-gray-600">
+                        {{ book.description|nl2br }}
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-gray-100">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                            <h2 class="text-2xl font-bold text-gray-900">Discussions</h2>
+                            {% if is_granted('ROLE_USER') %}
+                                <a href="{{ path('app_discussion_new', {'book': book.id}) }}" 
+                                   class="inline-flex items-center px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors duration-300">
+                                    <i class="fas fa-plus mr-2"></i>
+                                    Nouvelle discussion
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <div class="space-y-4">
+                            {% for discussion in discussions %}
+                                <div class="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-shadow duration-300 {% if discussion.isResolved %}bg-green-50 border-green-200{% endif %}">
+                                    <div class="flex justify-between items-start">
+                                        <h3 class="text-lg font-semibold text-gray-900">
+                                            <a href="{{ path('app_discussion_show', {'id': discussion.id}) }}"
+                                               class="hover:text-purple-600 transition-colors duration-300">
+                                                {{ discussion.title }}
+                                            </a>
+                                        </h3>
+                                        {% if discussion.isResolved %}
+                                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
+                                                <i class="fas fa-check-circle mr-1"></i>
+                                                Résolu
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="mt-2 flex items-center text-sm text-gray-500">
+                                        <i class="fas fa-user mr-2"></i>
+                                        {{ discussion.user.firstName }} {{ discussion.user.lastName }}
+                                        <span class="mx-2">•</span>
+                                        <i class="fas fa-clock mr-2"></i>
+                                        {{ discussion.createdAt|date('d/m/Y H:i') }}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="text-center py-12 bg-white rounded-xl border border-gray-200">
+                                    <div class="text-gray-400 mb-3">
+                                        <i class="fas fa-comments text-4xl"></i>
+                                    </div>
+                                    <h3 class="text-lg font-medium text-gray-900">Aucune discussion</h3>
+                                    <p class="mt-2 text-sm text-gray-500">Soyez le premier à démarrer une discussion sur ce livre.</p>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

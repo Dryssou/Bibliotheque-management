@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ author.name }}{% endblock %}
+
+{% block body %}
+<div class="min-h-screen bg-gray-50 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {# Flash Messages #}
+        {% for message in app.flashes('success') %}
+            <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 rounded-r-lg">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-500 mr-3"></i>
+                    <span class="text-green-700">{{ message }}</span>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {# Author Photo Section #}
+                <div class="md:col-span-1">
+                    {% if author.photo %}
+                        <div class="aspect-[3/4] relative">
+                            <img src="{{ asset('uploads/authors/' ~ author.photo) }}" 
+                                 alt="{{ author.name }}" 
+                                 class="w-full h-full object-cover">
+                        </div>
+                    {% else %}
+                        <div class="aspect-[3/4] bg-gradient-to-br from-purple-50 to-purple-100 flex flex-col items-center justify-center">
+                            <i class="fas fa-user text-6xl text-purple-300 mb-2"></i>
+                            <span class="text-sm text-purple-300">Pas de photo</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="p-6 md:col-span-2">
+                    <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                        <div>
+                            <h1 class="text-3xl font-bold text-gray-900">{{ author.name }}</h1>
+                            {% if author.nationality %}
+                                <p class="mt-2 text-lg text-gray-600 flex items-center">
+                                    <i class="fas fa-globe-europe mr-2"></i>
+                                    {{ author.nationality }}
+                                </p>
+                            {% endif %}
+                        </div>
+
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <div class="flex gap-2">
+                                <a href="{{ path('app_author_edit', {'id': author.id}) }}" 
+                                   class="inline-flex items-center px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-sm font-medium rounded-lg transition-colors duration-300">
+                                    <i class="fas fa-edit mr-2"></i>
+                                    Modifier
+                                </a>
+                                {{ include('author/_delete_form.html.twig') }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    {% if author.biography %}
+                        <div class="mt-6 prose max-w-none text-gray-600">
+                            {{ author.biography|nl2br }}
+                        </div>
+                    {% endif %}
+
+                    <div class="mt-8 pt-6 border-t border-gray-100">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                            <h2 class="text-2xl font-bold text-gray-900">Livres de l'auteur</h2>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {% for book in author.books %}
+                                <div class="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-sm transition-all duration-300">
+                                    <h3 class="font-semibold text-lg mb-2">
+                                        <a href="{{ path('app_book_show', {'id': book.id}) }}"
+                                           class="text-gray-900 hover:text-purple-600 transition-colors duration-300">
+                                            {{ book.title }}
+                                        </a>
+                                    </h3>
+                                    {% if book.genres|length > 0 %}
+                                        <div class="flex flex-wrap gap-2 mt-2">
+                                            {% for genre in book.genres %}
+                                                <span class="px-3 py-1 text-xs font-medium bg-purple-50 text-purple-700 rounded-full border border-purple-100">
+                                                    {{ genre.name }}
+                                                </span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% else %}
+                                <div class="col-span-2">
+                                    <div class="text-center py-12 bg-white rounded-xl border border-gray-200">
+                                        <div class="text-gray-400 mb-3">
+                                            <i class="fas fa-books text-4xl"></i>
+                                        </div>
+                                        <h3 class="text-lg font-medium text-gray-900">Aucun livre</h3>
+                                        <p class="mt-2 text-sm text-gray-500">Aucun livre n'a été ajouté pour cet auteur.</p>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-6 text-center">
+            <a href="{{ path('app_author_index') }}" 
+               class="inline-flex items-center text-sm font-medium text-purple-600 hover:text-purple-700 transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i>
+                Retour à la liste des auteurs
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

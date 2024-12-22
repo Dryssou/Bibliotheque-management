@@ -1,0 +1,49 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la discussion{% endblock %}
+
+{% block body %}
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <div class="flex justify-between items-center">
+                <h1 class="text-2xl font-bold text-gray-900">Modifier la discussion</h1>
+                <a href="{{ path('app_discussion_show', {'id': discussion.id}) }}" class="text-indigo-600 hover:text-indigo-900">
+                    Retour à la discussion
+                </a>
+            </div>
+        </div>
+
+        <div class="px-6 py-4">
+            {{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+                <div class="space-y-4">
+                    <div>
+                        {{ form_label(form.title, 'Titre', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                        {{ form_widget(form.title) }}
+                        {{ form_errors(form.title, {'attr': {'class': 'mt-1 text-sm text-red-600'}}) }}
+                    </div>
+
+                    <div>
+                        {{ form_label(form.book, 'Livre concerné', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                        {{ form_widget(form.book) }}
+                        {{ form_errors(form.book, {'attr': {'class': 'mt-1 text-sm text-red-600'}}) }}
+                    </div>
+
+                    <div>
+                        {{ form_label(form.content, 'Contenu', {'label_attr': {'class': 'block text-sm font-medium text-gray-700'}}) }}
+                        {{ form_widget(form.content) }}
+                        {{ form_errors(form.content, {'attr': {'class': 'mt-1 text-sm text-red-600'}}) }}
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end space-x-3">
+                    {{ include('discussion/_delete_form.html.twig') }}
+                    <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Enregistrer les modifications
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</div>
+{% endblock %}
