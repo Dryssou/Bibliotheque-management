@@ -65,8 +65,8 @@ symfony serve -d
 
 ## 👤 Comptes par défaut
 
-- Admin: admin@example.com / password
-- User: user@example.com / password
+- Admin: admin@example.com / admin123
+- User: user@example.com / user123
 
 ## 📱 Pages principales
 
